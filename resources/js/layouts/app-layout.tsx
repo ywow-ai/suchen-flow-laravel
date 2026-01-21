@@ -59,7 +59,7 @@ const navs: Record<string, NavItem[]> = {
   main: [
     {
       path: '/',
-      name: 'Dashboard',
+      name: 'Dasbor',
       regex:
         /^(?!\/(kasir|produk|stok|member|transaksi|settings|rekap)(\/|$)).+$/,
       Icon: LayoutDashboard,
@@ -98,7 +98,7 @@ const navs: Record<string, NavItem[]> = {
   secondary: [
     {
       path: '/settings',
-      name: 'Settings',
+      name: 'Pengaturan',
       regex: /^\/settings(\/.*)?$/,
       Icon: Settings,
     },
@@ -216,7 +216,7 @@ const SidebarMain = ({
                         className="rounded-sm data-[state=open]:bg-accent"
                       >
                         <MoreVertical />
-                        <span className="sr-only">More</span>
+                        <span className="sr-only">Lainnya</span>
                       </SidebarMenuAction>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
@@ -226,16 +226,16 @@ const SidebarMain = ({
                     >
                       <DropdownMenuItem>
                         <Folder />
-                        <span>Open</span>
+                        <span>Buka</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem>
                         <Share2 />
-                        <span>Share</span>
+                        <span>Bagikan</span>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem variant="destructive">
                         <Trash2 />
-                        <span>Delete</span>
+                        <span>Hapus</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -245,7 +245,7 @@ const SidebarMain = ({
             <SidebarMenuItem>
               <SidebarMenuButton className="text-sidebar-foreground/70">
                 <MoreVertical className="text-sidebar-foreground/70" />
-                <span>More</span>
+                <span>Lainnya</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -270,7 +270,7 @@ const SidebarMain = ({
                   {theme === 'system' && <Contrast />}
                   {theme === 'light' && <Sun />}
                   {theme === 'dark' && <Moon />}
-                  <span>Change Theme</span>
+                  <span>Ubah Tema</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
@@ -337,21 +337,21 @@ const SidebarMain = ({
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <UserCircle />
-                    Account
+                    Akun
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <CreditCard />
-                    Billing
+                    Tagihan
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <Bell />
-                    Notifications
+                    Notifikasi
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <LogOut />
-                  Log out
+                  Keluar
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

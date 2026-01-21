@@ -11,23 +11,23 @@ export default function ErrorPage({ status }: ErrorPageProps) {
     { title: string; description: string; icon: any }
   > = {
     404: {
-      title: '404: Page Not Found',
-      description: 'The page you are looking for could not be found.',
+      title: '404: Halaman Tidak Ditemukan',
+      description: 'Halaman yang Anda cari tidak dapat ditemukan.',
       icon: AlertCircle,
     },
     403: {
-      title: '403: Forbidden',
-      description: 'You do not have permission to access this page.',
+      title: '403: Dilarang',
+      description: 'Anda tidak memiliki izin untuk mengakses halaman ini.',
       icon: Shield,
     },
     500: {
-      title: '500: Server Error',
-      description: 'Something went wrong on our servers.',
+      title: '500: Kesalahan Server',
+      description: 'Terjadi kesalahan pada server kami.',
       icon: Server,
     },
     503: {
-      title: '503: Service Unavailable',
-      description: 'We are under maintenance. Please try again soon.',
+      title: '503: Layanan Tidak Tersedia',
+      description: 'Kami sedang dalam pemeliharaan. Silakan coba lagi nanti.',
       icon: Wrench,
     },
   };
@@ -37,8 +37,9 @@ export default function ErrorPage({ status }: ErrorPageProps) {
     description,
     icon: Icon,
   } = errorConfig[status] || {
-    title: `${status}: Unexpected Error`,
-    description: 'An unknown error occurred. Please try again later.',
+    title: `${status}: Kesalahan Tidak Terduga`,
+    description:
+      'Terjadi kesalahan yang tidak diketahui. Silakan coba lagi nanti.',
     icon: AlertCircle,
   };
 
