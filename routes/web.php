@@ -10,12 +10,13 @@ use App\Http\Controllers\{
     TransaksiController
 };
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('login', [AuthController::class, 'create'])->name('login');
 Route::post('login', [AuthController::class, 'store'])->name('login.store');
 
 Route::middleware(['auth'])->group(function () {
-    Route::resource('dashboard', DashboardController::class)->only(['index']);
+    Route::get('/', fn() => Inertia::render('dashboard/index'))->name('dashboard');
     Route::resource('kasir', KasirController::class);
     Route::resource('member', MemberController::class);
     Route::resource('produk', ProdukController::class);

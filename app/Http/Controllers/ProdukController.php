@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ProdukController extends Controller
@@ -10,9 +11,37 @@ class ProdukController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('produk/index');
+        $query = DB::table('tbx_products')
+            ->whereNull('deleted_at');
+
+        // Filter kategori
+        if ($request->has('kategori') && $request->kategori !== '*') {
+            $query->where('category', $request->kategori);
+        }
+
+        // Filter search
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $perPage = $request->get('per_page', 10);
+        $paginated = $query->paginate($perPage);
+
+        return Inertia::render('produk/index', [
+            'data' => $paginated->items(),
+            'current_page' => $paginated->currentPage(),
+            'per_page' => $paginated->perPage(),
+            'total' => $paginated->total(),
+            'last_page' => $paginated->lastPage(),
+            'kategori' => $request->get('kategori', '*'),
+            'search' => $request->get('search', ''),
+        ]);
     }
 
     /**
@@ -29,9 +58,10 @@ class ProdukController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
-            'kategori' => ['required', 'string', 'in:Makanan,Minuman'],
-            'foto' => ['nullable', 'image', 'max:2048'],
+            'name' => ['required', 'string', 'max:100'],
+            'category' => ['required', 'string', 'in:Makanan,Minuman'],
+            'description' => ['nullable', 'string'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
 
         sleep(3);

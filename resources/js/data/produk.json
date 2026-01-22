@@ -1,0 +1,122 @@
+[
+  {
+    "nama": "Nasi Goreng Spesial",
+    "kategori": "Makanan",
+    "deskripsi": "Nasi goreng dengan ayam, udang, telur, dan sayuran segar",
+    "gambar": "https://placehold.co/600x400/FF6B6B/FFFFFF?text=Nasi+Goreng"
+  },
+  {
+    "nama": "Mie Goreng Jawa",
+    "kategori": "Makanan",
+    "deskripsi": "Mie goreng dengan bumbu khas Jawa dan telur ceplok",
+    "gambar": "https://placehold.co/600x400/4ECDC4/FFFFFF?text=Mie+Goreng"
+  },
+  {
+    "nama": "Ayam Bakar Madu",
+    "kategori": "Makanan",
+    "deskripsi": "Ayam bakar dengan bumbu madu yang manis dan gurih",
+    "gambar": "https://placehold.co/600x400/FFE66D/000000?text=Ayam+Bakar"
+  },
+  {
+    "nama": "Sate Ayam",
+    "kategori": "Makanan",
+    "deskripsi": "Sate ayam dengan bumbu kacang dan lontong",
+    "gambar": "https://placehold.co/600x400/1A535C/FFFFFF?text=Sate+Ayam"
+  },
+  {
+    "nama": "Rendang Daging",
+    "kategori": "Makanan",
+    "deskripsi": "Daging sapi dimasak dengan bumbu rempah khas Padang",
+    "gambar": "https://placehold.co/600x400/FF6B6B/FFFFFF?text=Rendang"
+  },
+  {
+    "nama": "Gado-gado",
+    "kategori": "Makanan",
+    "deskripsi": "Salad sayuran dengan bumbu kacang dan kerupuk",
+    "gambar": "https://placehold.co/600x400/4ECDC4/FFFFFF?text=Gado-gado"
+  },
+  {
+    "nama": "Soto Ayam",
+    "kategori": "Makanan",
+    "deskripsi": "Sup ayam dengan bumbu kuning dan bihun",
+    "gambar": "https://placehold.co/600x400/FFE66D/000000?text=Soto+Ayam"
+  },
+  {
+    "nama": "Bakso Sapi",
+    "kategori": "Makanan",
+    "deskripsi": "Bakso sapi dengan mie dan kuah kaldu sapi",
+    "gambar": "https://placehold.co/600x400/1A535C/FFFFFF?text=Bakso"
+  },
+  {
+    "nama": "Es Teh Manis",
+    "kategori": "Minuman",
+    "deskripsi": "Teh manis dingin dengan es batu",
+    "gambar": "https://placehold.co/600x400/06D6A0/FFFFFF?text=Es+Teh"
+  },
+  {
+    "nama": "Kopi Hitam",
+    "kategori": "Minuman",
+    "deskripsi": "Kopi hitam murni tanpa gula",
+    "gambar": "https://placehold.co/600x400/6A0572/FFFFFF?text=Kopi+Hitam"
+  },
+  {
+    "nama": "Jus Alpukat",
+    "kategori": "Minuman",
+    "deskripsi": "Jus alpukat dengan susu kental manis",
+    "gambar": "https://placehold.co/600x400/FF9F1C/FFFFFF?text=Jus+Alpukat"
+  },
+  {
+    "nama": "Es Jeruk",
+    "kategori": "Minuman",
+    "deskripsi": "Jeruk peras segar dengan es",
+    "gambar": "https://placehold.co/600x400/118AB2/FFFFFF?text=Es+Jeruk"
+  },
+  {
+    "nama": "Cappuccino",
+    "kategori": "Minuman",
+    "deskripsi": "Kopi dengan busa susu dan taburan kayu manis",
+    "gambar": "https://placehold.co/600x400/6A0572/FFFFFF?text=Cappuccino"
+  },
+  {
+    "nama": "Milkshake Coklat",
+    "kategori": "Minuman",
+    "deskripsi": "Milkshake coklat dengan whipped cream",
+    "gambar": "https://placehold.co/600x400/8B4513/FFFFFF?text=Milkshake"
+  },
+  {
+    "nama": "Air Mineral",
+    "kategori": "Minuman",
+    "deskripsi": null,
+    "gambar": "https://placehold.co/600x400/118AB2/FFFFFF?text=Air+Mineral"
+  },
+  {
+    "nama": "Es Campur",
+    "kategori": "Minuman",
+    "deskripsi": "Campuran buah, jelly, dan sirup dengan es serut",
+    "gambar": "https://placehold.co/600x400/FF9F1C/FFFFFF?text=Es+Campur"
+  },
+  {
+    "nama": "Martabak Manis",
+    "kategori": "Makanan",
+    "deskripsi": "Martabak manis dengan topping keju dan coklat",
+    "gambar": "https://placehold.co/600x400/FF6B6B/FFFFFF?text=Martabak"
+  },
+  {
+    "nama": "Pisang Goreng",
+    "kategori": "Makanan",
+    "deskripsi": "Pisang goreng dengan taburan gula halus",
+    "gambar": "https://placehold.co/600x400/FFE66D/000000?text=Pisang+Goreng"
+  },
+  {
+    "nama": "Dimsum Ayam",
+    "kategori": "Makanan",
+    "deskripsi": "Dimsum ayam dengan saus spesial",
+    "gambar": "https://placehold.co/600x400/4ECDC4/FFFFFF?text=Dimsum"
+  },
+  {
+    "nama": "Green Tea Latte",
+    "kategori": "Minuman",
+    "deskripsi": "Teh hijau dengan susu dan sedikit gula",
+    "gambar": "https://placehold.co/600x400/06D6A0/FFFFFF?text=Green+Tea"
+  }
+]

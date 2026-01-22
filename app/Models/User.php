@@ -4,6 +4,18 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * Eloquent Model Properties
+ * 
+ * @property int $id
+ * @property string $name
+ * @property string $username
+ * @property string $password
+ * @property string|null $email
+ * @property string|null $remember_token
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ */
 class User extends Authenticatable
 {
     /**
