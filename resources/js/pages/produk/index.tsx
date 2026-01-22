@@ -1,3 +1,7 @@
+import { Form, Head } from '@inertiajs/react';
+import { Plus, Trash2, Upload } from 'lucide-react';
+import { useId, useRef, useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -21,9 +25,6 @@ import {
 import { AppLayout } from '@/layouts/app-layout';
 import { store } from '@/routes/produk';
 import { BreadcrumbItem } from '@/types';
-import { Form, Head } from '@inertiajs/react';
-import { Plus, Trash2, Upload } from 'lucide-react';
-import { useId, useRef, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {

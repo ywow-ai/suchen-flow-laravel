@@ -1,3 +1,6 @@
+import { Form, Head, Link } from '@inertiajs/react';
+import { HTMLAttributes } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -6,8 +9,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
 import { index } from '@/routes/dashboard';
 import { store } from '@/routes/login';
-import { Form, Head, Link } from '@inertiajs/react';
-import { HTMLAttributes } from 'react';
 
 interface LoginProps {
   status?: string;

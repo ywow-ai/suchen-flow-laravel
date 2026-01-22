@@ -1,3 +1,28 @@
+import { Link, usePage } from '@inertiajs/react';
+import {
+  Bell,
+  Braces,
+  Building2,
+  Contrast,
+  CreditCard,
+  Folder,
+  Layers,
+  LayoutDashboard,
+  LogOut,
+  Moon,
+  MoreVertical,
+  Package,
+  Receipt,
+  Settings,
+  Share2,
+  ShoppingCart,
+  Sun,
+  Trash2,
+  UserCircle,
+  Users,
+} from 'lucide-react';
+import { ReactNode } from 'react';
+
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -28,30 +53,6 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { BreadcrumbItem, NavItem } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
-import {
-  Bell,
-  Braces,
-  Building2,
-  Contrast,
-  CreditCard,
-  Folder,
-  Layers,
-  LayoutDashboard,
-  LogOut,
-  Moon,
-  MoreVertical,
-  Package,
-  Receipt,
-  Settings,
-  Share2,
-  ShoppingCart,
-  Sun,
-  Trash2,
-  UserCircle,
-  Users,
-} from 'lucide-react';
-import { ReactNode } from 'react';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -151,7 +152,9 @@ const SidebarMain = ({
   const { isMobile } = useSidebar();
   const { theme, setTheme } = {
     theme: 'dark',
-    setTheme: (theme: 'system' | 'light' | 'dark') => {},
+    setTheme: (theme: 'system' | 'light' | 'dark') => {
+      console.log(theme);
+    },
   };
 
   return (

@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { AlertCircle, Server, Shield, Wrench } from 'lucide-react';
+import { AlertCircle, LucideIcon, Server, Shield, Wrench } from 'lucide-react';
 
 interface ErrorPageProps {
   status: number;
@@ -8,7 +8,7 @@ interface ErrorPageProps {
 export default function ErrorPage({ status }: ErrorPageProps) {
   const errorConfig: Record<
     number,
-    { title: string; description: string; icon: any }
+    { title: string; description: string; icon: LucideIcon }
   > = {
     404: {
       title: '404: Halaman Tidak Ditemukan',
