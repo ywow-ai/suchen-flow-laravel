@@ -1,4 +1,6 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+
+import { Button } from '@/components/ui/button';
 import { AlertCircle, LucideIcon, Server, Shield, Wrench } from 'lucide-react';
 
 interface ErrorPageProps {
@@ -46,11 +48,17 @@ export default function ErrorPage({ status }: ErrorPageProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
       <Head title={title} />
-      <div className="mb-6 rounded-full bg-gray-100 p-8">
-        <Icon className="h-16 w-16 text-gray-600" />
+      <div className="mb-6 rounded-sm bg-muted p-8">
+        <Icon className="h-16 w-16 text-muted-foreground" />
       </div>
       <h1 className="text-3xl font-bold">{title}</h1>
-      <p className="mt-2 text-gray-500">{description}</p>
+      <p className="mt-2 text-muted-foreground">{description}</p>
+      <div className="mt-6 flex gap-4">
+        <Button variant="outline" onClick={() => window.history.back()}>
+          Kembali
+        </Button>
+        <Button onClick={() => router.visit('/')}>Kembali ke Dasbor</Button>
+      </div>
     </div>
   );
 }

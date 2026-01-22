@@ -139,7 +139,7 @@ const ProdukPage = () => {
                             <div className="relative">
                               <label
                                 htmlFor={ids.foto}
-                                className="relative block h-auto w-full cursor-pointer overflow-hidden rounded-lg border border-border"
+                                className="relative block h-auto w-full cursor-pointer overflow-hidden rounded-sm border border-border"
                               >
                                 <img
                                   src={preview}
@@ -172,7 +172,7 @@ const ProdukPage = () => {
                           ) : (
                             <label
                               htmlFor={ids.foto}
-                              className="flex h-40 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border transition-colors hover:border-primary hover:bg-accent"
+                              className="flex h-40 cursor-pointer flex-col items-center justify-center rounded-sm border-2 border-dashed border-border transition-colors hover:border-primary hover:bg-accent"
                             >
                               <Upload className="mb-2 h-10 w-10 text-muted-foreground" />
                               <span className="text-sm text-foreground">

@@ -1,4 +1,4 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import {
   Bell,
   Braces,
@@ -52,6 +52,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { logout } from '@/routes';
 import { BreadcrumbItem, NavItem } from '@/types';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -352,9 +353,19 @@ const SidebarMain = ({
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <LogOut />
-                  Keluar
+                <DropdownMenuItem asChild>
+                  <Link
+                    className="block w-full cursor-pointer"
+                    href={logout()}
+                    as="button"
+                    onClick={() => {
+                      router.flushAll();
+                    }}
+                    data-test="logout-button"
+                  >
+                    <LogOut />
+                    Keluar
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
