@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
+
+class AuthController extends Controller
+{
+    protected $guard;
+
+    public function __construct(StatefulGuard $guard)
+    {
+        $this->guard = $guard;
+    }
+
+    public function create(Request $request)
+    {
+        return Inertia::render('login', [
+            'status' => $request->session()->get('status'),
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            $request->validate(['username' => 'required|string', 'password' => 'required|string']);
+            $user = User::where('username', $request->input('username'))->first();
+            if (!$user || !Hash::check($request->input('password'), $user->password)) {
+                return redirect()->back();
+            }
+
+            Auth::login($user);
+            return redirect('/dashboard');
+        } catch (\Throwable $th) {
+            return redirect()->back();
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        $this->guard->logout();
+
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        return redirect('/login');
+    }
+}
