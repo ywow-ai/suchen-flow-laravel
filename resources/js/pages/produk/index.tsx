@@ -11,7 +11,14 @@ import {
   Upload,
 } from 'lucide-react';
 import qs from 'qs';
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -99,36 +106,41 @@ const ProdukPage = ({
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const updateQueryParams = (params: Record<string, string | number>) => {
-    const urlObj = new URL(url, window.location.origin);
-    const currentParams = qs.parse(urlObj.search, { ignoreQueryPrefix: true });
+  const updateQueryParams = useCallback(
+    (params: Record<string, string | number>) => {
+      const urlObj = new URL(url, window.location.origin);
+      const currentParams = qs.parse(urlObj.search, {
+        ignoreQueryPrefix: true,
+      });
 
-    // Update params
-    Object.entries(params).forEach(([key, value]) => {
-      if (
-        value === '*' ||
-        value === '' ||
-        value === null ||
-        value === undefined
-      ) {
-        delete currentParams[key];
-      } else {
-        currentParams[key] = String(value);
-      }
-    });
+      // Update params
+      Object.entries(params).forEach(([key, value]) => {
+        if (
+          value === '*' ||
+          value === '' ||
+          value === null ||
+          value === undefined
+        ) {
+          delete currentParams[key];
+        } else {
+          currentParams[key] = String(value);
+        }
+      });
 
-    const queryString = qs.stringify(currentParams, { addQueryPrefix: true });
-    const newUrl = urlObj.pathname + queryString;
+      const queryString = qs.stringify(currentParams, { addQueryPrefix: true });
+      const newUrl = urlObj.pathname + queryString;
 
-    router.get(newUrl, {}, { preserveState: true, preserveScroll: true });
-  };
+      router.get(newUrl, {}, { preserveState: true, preserveScroll: true });
+    },
+    [url],
+  );
 
   const debouncedSearch = useMemo(
     () =>
       debounce((value: string) => {
         updateQueryParams({ search: value, page: 1 });
       }, 500),
-    [],
+    [updateQueryParams],
   );
 
   const handleKategoriChange = (value: string) => {
@@ -319,7 +331,7 @@ const ProdukPage = ({
                               </label>
                             )}
                             {errors.image && (
-                              <p className="mt-2 text-sm text-red-500">
+                              <p className="mt-2 text-sm text-destructive">
                                 {errors.image}
                               </p>
                             )}
@@ -334,7 +346,7 @@ const ProdukPage = ({
                               required
                             />
                             {errors.name && (
-                              <p className="text-sm text-red-500">
+                              <p className="text-sm text-destructive">
                                 {errors.name}
                               </p>
                             )}
@@ -369,7 +381,7 @@ const ProdukPage = ({
                               value={kategori}
                             />
                             {errors.category && (
-                              <p className="text-sm text-red-500">
+                              <p className="text-sm text-destructive">
                                 {errors.category}
                               </p>
                             )}

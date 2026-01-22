@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
 import { Building2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,6 @@ import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { store } from '@/routes/login';
-import { Form } from '@inertiajs/react';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -52,6 +51,11 @@ export default function Login() {
                         autoComplete="username"
                         placeholder="kai"
                       />
+                      {errors.username && (
+                        <p className="text-sm text-destructive">
+                          {errors.username}
+                        </p>
+                      )}
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="password">Kata Sandi</FieldLabel>
@@ -64,6 +68,11 @@ export default function Login() {
                         autoComplete="current-password"
                         placeholder="Kata sandi"
                       />
+                      {errors.password && (
+                        <p className="text-sm text-destructive">
+                          {errors.password}
+                        </p>
+                      )}
                     </Field>
                     <Field>
                       <Button

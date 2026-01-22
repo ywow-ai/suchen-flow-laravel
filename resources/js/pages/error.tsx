@@ -1,7 +1,7 @@
 import { Head, router } from '@inertiajs/react';
+import { AlertCircle, LucideIcon, Server, Shield, Wrench } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { AlertCircle, LucideIcon, Server, Shield, Wrench } from 'lucide-react';
 
 interface ErrorPageProps {
   status: number;
