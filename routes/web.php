@@ -1,22 +1,21 @@
 <?php
 
-use App\Http\Controllers\{
-    AuthController,
-    DashboardController,
-    KasirController,
-    MemberController,
-    ProdukController,
-    StokController,
-    TransaksiController
-};
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\KasirController;
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\StokController;
+use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('login', [AuthController::class, 'create'])->name('login');
-Route::post('login', [AuthController::class, 'store'])->name('login.store');
+Route::middleware(['guest'])->group(function () {
+    Route::get('login', [AuthController::class, 'create'])->name('login');
+    Route::post('login', [AuthController::class, 'store'])->name('login.store');
+});
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/', fn() => Inertia::render('dashboard/index'))->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('kasir', KasirController::class);
     Route::resource('member', MemberController::class);
     Route::resource('produk', ProdukController::class);

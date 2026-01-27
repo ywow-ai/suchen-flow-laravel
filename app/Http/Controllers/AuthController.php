@@ -30,11 +30,27 @@ class AuthController extends Controller
         try {
             $request->validate(['username' => 'required|string', 'password' => 'required|string']);
             $user = User::where('username', $request->input('username'))->first();
-            if (!$user || !Hash::check($request->input('password'), $user->password)) {
-                return redirect()->back();
+
+            if (! $user) {
+                return back()
+                    ->withInput($request->only('username'))
+                    ->withErrors([
+                        'username' => 'Username tidak ditemukan.',
+                    ])
+                    ->with('error', 'Login gagal.');
+            }
+
+            if (! Hash::check($request->input('password'), $user->password)) {
+                return back()
+                    ->withInput($request->only('username'))
+                    ->withErrors([
+                        'password' => 'Password salah.',
+                    ])
+                    ->with('error', 'Login gagal.');
             }
 
             Auth::login($user);
+
             return redirect('/');
         } catch (\Throwable $th) {
             return redirect()->back();

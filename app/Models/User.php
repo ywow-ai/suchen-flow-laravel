@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Eloquent Model Properties
- * 
+ *
  * @property int $id
  * @property string $name
  * @property string $username

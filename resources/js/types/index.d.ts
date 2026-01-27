@@ -21,10 +21,21 @@ export interface NavItem {
   Icon: LucideIcon;
 }
 
+export interface Toast {
+  type: 'success' | 'error' | 'warning' | 'info';
+  message: string;
+  title?: string;
+}
+
+export interface Flash {
+  toast?: Toast;
+}
+
 export interface SharedData {
   name: string;
   auth: Auth;
   sidebarOpen: boolean;
+  flash: Flash;
   [key: string]: unknown;
 }
 

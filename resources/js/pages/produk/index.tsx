@@ -1,4 +1,4 @@
-import { Form, Head, router, usePage } from '@inertiajs/react';
+import { Form, Head, progress, router, usePage } from '@inertiajs/react';
 import { debounce } from 'lodash';
 import {
   ChevronLeft,
@@ -74,9 +74,25 @@ interface ProdukPageProps {
   per_page?: number;
   total?: number;
   last_page?: number;
-  kategori?: string;
+  category?: string;
   search?: string;
 }
+
+const columns = [
+  { key: 'image', header: 'Gambar' },
+  { key: 'name', header: 'Nama' },
+  { key: 'category', header: 'Kategori' },
+  { key: 'description', header: 'Deskripsi' },
+] as const;
+
+const categories = [
+  { value: '*', label: 'Semua' },
+  { value: 'Makanan', label: 'Makanan' },
+  { value: 'Minuman', label: 'Minuman' },
+] as const;
+
+type Category = (typeof categories)[number]['value'];
+type Params = Record<string, string | number>;
 
 const ProdukPage = ({
   data = [],
@@ -84,53 +100,42 @@ const ProdukPage = ({
   per_page = 10,
   total = 0,
   last_page = 1,
-  kategori: kategoriFilter = '*',
+  category: categoryFilter = '*',
   search: searchFilter = '',
 }: ProdukPageProps) => {
   const { url } = usePage();
   const ids = {
     foto: useId(),
     nama: useId(),
-    kategori: useId(),
+    category: useId(),
     search: useId(),
   };
 
-  const categories = [
-    { value: '*', label: 'Semua' },
-    { value: 'Makanan', label: 'Makanan' },
-    { value: 'Minuman', label: 'Minuman' },
-  ];
-
-  const [kategori, setKategori] = useState('Makanan');
+  const [category, setCategory] = useState<Category>('Makanan');
   const [search, setSearch] = useState(searchFilter);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateQueryParams = useCallback(
-    (params: Record<string, string | number>) => {
-      const urlObj = new URL(url, window.location.origin);
-      const currentParams = qs.parse(urlObj.search, {
+    (query: Params | ((params: Params) => Params)) => {
+      progress.start();
+      const { pathname, search } = new URL(url, window.location.origin);
+      const current = qs.parse(search, {
         ignoreQueryPrefix: true,
-      });
+      }) as Params;
 
-      // Update params
-      Object.entries(params).forEach(([key, value]) => {
-        if (
-          value === '*' ||
-          value === '' ||
-          value === null ||
-          value === undefined
-        ) {
-          delete currentParams[key];
-        } else {
-          currentParams[key] = String(value);
-        }
-      });
+      const params = typeof query === 'function' ? query(current) : query;
+      const newParams = Object.fromEntries(
+        Object.entries(params)
+          .map(([key, value]) => [key, String(value)])
+          .filter(([, value]) => !/^(?:\*|null|undefined|)$/.test(value)),
+      );
 
-      const queryString = qs.stringify(currentParams, { addQueryPrefix: true });
-      const newUrl = urlObj.pathname + queryString;
+      const queryString = qs.stringify(newParams, { addQueryPrefix: true });
+      const newUrl = pathname + queryString;
 
       router.get(newUrl, {}, { preserveState: true, preserveScroll: true });
+      progress.finish();
     },
     [url],
   );
@@ -142,23 +147,6 @@ const ProdukPage = ({
       }, 500),
     [updateQueryParams],
   );
-
-  const handleKategoriChange = (value: string) => {
-    updateQueryParams({ kategori: value, page: 1 });
-  };
-
-  const handlePageChange = (page: number) => {
-    updateQueryParams({ page });
-  };
-
-  const handlePageSizeChange = (size: number) => {
-    updateQueryParams({ per_page: size, page: 1 });
-  };
-
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
-    debouncedSearch(value);
-  };
 
   // Sync search state with props
   useEffect(() => {
@@ -192,35 +180,26 @@ const ProdukPage = ({
     }
   };
 
-  const columns = [
-    { key: 'image', header: 'Gambar' },
-    { key: 'name', header: 'Nama' },
-    { key: 'category', header: 'Kategori' },
-    { key: 'description', header: 'Deskripsi' },
-  ];
-
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Produk" />
 
       <div className="flex w-full flex-col gap-6 px-4 lg:px-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative flex-1 lg:max-w-sm">
-            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              id={ids.search}
-              type="text"
-              placeholder="Cari produk..."
-              value={search}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 lg:order-last">
             <Label htmlFor="view-selector" className="sr-only">
               Tampilan
             </Label>
-            <Select value={kategoriFilter} onValueChange={handleKategoriChange}>
+            <Select
+              value={categoryFilter}
+              onValueChange={(value) =>
+                updateQueryParams((prev) => ({
+                  ...prev,
+                  category: value,
+                  page: 1,
+                }))
+              }
+            >
               <SelectTrigger className="w-fit" size="sm" id="view-selector">
                 <SelectValue placeholder="Pilih kategori" />
               </SelectTrigger>
@@ -237,33 +216,28 @@ const ProdukPage = ({
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   <Plus />
-                  <span className="hidden lg:inline">Tambah Produk</span>
+                  <span className="inline">Tambah Produk</span>
                 </Button>
               </DialogTrigger>
 
               <DialogContent className="overflow-y-auto p-0">
-                <div className="p-6">
-                  <DialogHeader>
-                    <DialogTitle>Tambah Produk Baru</DialogTitle>
-                  </DialogHeader>
-                  <DialogDescription>
-                    Tambahkan produk baru ke dalam sistem. Isi semua informasi
-                    yang diperlukan untuk produk ini. Pastikan data yang
-                    dimasukkan sudah benar sebelum disimpan.
-                  </DialogDescription>
+                <div className="flex flex-col gap-4 p-6">
+                  <div className="flex flex-col gap-1">
+                    <DialogHeader>
+                      <DialogTitle>Tambah Produk Baru</DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription>
+                      Tambahkan produk baru ke dalam sistem. Isi semua informasi
+                      yang diperlukan untuk produk ini. Pastikan data yang
+                      dimasukkan sudah benar sebelum disimpan.
+                    </DialogDescription>
+                  </div>
                   <Form
                     {...store.form()}
                     options={{
                       preserveScroll: true,
                     }}
-                    onSuccess={() => {
-                      setPreview(null);
-                      setKategori('Makanan');
-                      if (fileInputRef.current) {
-                        fileInputRef.current.value = '';
-                      }
-                    }}
-                    className="space-y-4 py-4"
+                    className="space-y-4"
                   >
                     {({ resetAndClearErrors, processing, errors }) => (
                       <>
@@ -353,15 +327,17 @@ const ProdukPage = ({
                           </div>
 
                           <div className="space-y-2">
-                            <Label htmlFor={ids.kategori}>Kategori *</Label>
+                            <Label htmlFor={ids.category}>Kategori *</Label>
                             <Select
-                              value={kategori}
-                              onValueChange={setKategori}
+                              value={category}
+                              onValueChange={(value: Category) =>
+                                setCategory(value)
+                              }
                               required
                             >
                               <SelectTrigger
                                 className="w-full"
-                                id={ids.kategori}
+                                id={ids.category}
                               >
                                 <SelectValue placeholder="Pilih kategori" />
                               </SelectTrigger>
@@ -378,7 +354,7 @@ const ProdukPage = ({
                             <input
                               type="hidden"
                               name="category"
-                              value={kategori}
+                              value={category}
                             />
                             {errors.category && (
                               <p className="text-sm text-destructive">
@@ -395,7 +371,7 @@ const ProdukPage = ({
                               onClick={() => {
                                 resetAndClearErrors();
                                 setPreview(null);
-                                setKategori('Makanan');
+                                setCategory('Makanan');
                                 if (fileInputRef.current) {
                                   fileInputRef.current.value = '';
                                 }
@@ -418,6 +394,20 @@ const ProdukPage = ({
                 </div>
               </DialogContent>
             </Dialog>
+          </div>
+          <div className="relative flex-1 lg:max-w-sm">
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id={ids.search}
+              type="text"
+              placeholder="Cari produk..."
+              value={search}
+              onChange={({ currentTarget: { value } }) => {
+                setSearch(value);
+                debouncedSearch(value);
+              }}
+              className="pl-9"
+            />
           </div>
         </div>
 
@@ -477,9 +467,13 @@ const ProdukPage = ({
               </Label>
               <Select
                 value={`${per_page}`}
-                onValueChange={(value) => {
-                  handlePageSizeChange(Number(value));
-                }}
+                onValueChange={(value) =>
+                  updateQueryParams((prev) => ({
+                    ...prev,
+                    per_page: value,
+                    page: 1,
+                  }))
+                }
               >
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
                   <SelectValue placeholder={per_page} />
@@ -500,7 +494,9 @@ const ProdukPage = ({
               <Button
                 variant="outline"
                 className="hidden h-8 w-8 p-0 lg:flex"
-                onClick={() => handlePageChange(1)}
+                onClick={() =>
+                  updateQueryParams((prev) => ({ ...prev, page: 1 }))
+                }
                 disabled={current_page === 1}
               >
                 <span className="sr-only">Ke halaman pertama</span>
@@ -510,7 +506,12 @@ const ProdukPage = ({
                 variant="outline"
                 className="size-8"
                 size="icon"
-                onClick={() => handlePageChange(current_page - 1)}
+                onClick={() =>
+                  updateQueryParams((prev) => ({
+                    ...prev,
+                    page: current_page - 1,
+                  }))
+                }
                 disabled={current_page === 1}
               >
                 <span className="sr-only">Ke halaman sebelumnya</span>
@@ -520,7 +521,12 @@ const ProdukPage = ({
                 variant="outline"
                 className="size-8"
                 size="icon"
-                onClick={() => handlePageChange(current_page + 1)}
+                onClick={() =>
+                  updateQueryParams((prev) => ({
+                    ...prev,
+                    page: current_page + 1,
+                  }))
+                }
                 disabled={current_page >= last_page}
               >
                 <span className="sr-only">Ke halaman berikutnya</span>
@@ -530,7 +536,9 @@ const ProdukPage = ({
                 variant="outline"
                 className="hidden size-8 lg:flex"
                 size="icon"
-                onClick={() => handlePageChange(last_page)}
+                onClick={() =>
+                  updateQueryParams((prev) => ({ ...prev, page: last_page }))
+                }
                 disabled={current_page >= last_page}
               >
                 <span className="sr-only">Ke halaman terakhir</span>

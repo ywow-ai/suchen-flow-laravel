@@ -5,28 +5,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class ProdukController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): InertiaResponse
     {
-        $query = DB::table('tbx_products')
-            ->whereNull('deleted_at');
+        $query = DB::table('tbx_products');
 
-        // Filter kategori
-        if ($request->has('kategori') && $request->kategori !== '*') {
-            $query->where('category', $request->kategori);
+        if (! ($request->has('include_deleted') && (bool) $request->input('include_deleted'))) {
+            $query->whereNull('deleted_at');
         }
 
-        // Filter search
-        if ($request->has('search') && $request->search !== '') {
-            $search = $request->search;
+        if ($request->has('category') && $request->input('category') !== '*') {
+            $query->where('category', $request->input('category'));
+        }
+
+        if ($request->has('search') && $request->input('search') !== '') {
+            $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -39,7 +41,7 @@ class ProdukController extends Controller
             'per_page' => $paginated->perPage(),
             'total' => $paginated->total(),
             'last_page' => $paginated->lastPage(),
-            'kategori' => $request->get('kategori', '*'),
+            'category' => $request->get('category', '*'),
             'search' => $request->get('search', ''),
         ]);
     }
@@ -57,16 +59,22 @@ class ProdukController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:100'],
-            'category' => ['required', 'string', 'in:Makanan,Minuman'],
-            'description' => ['nullable', 'string'],
-            'image' => ['nullable', 'image', 'max:2048'],
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => ['required', 'string', 'max:100'],
+                'category' => ['required', 'string', 'in:Makanan,Minuman'],
+                'description' => ['nullable', 'string'],
+                'image' => ['nullable', 'image', 'max:2048'],
+            ]);
 
-        sleep(3);
+            sleep(1);
 
-        return redirect()->back();
+            toastSuccess('Berhasil');
+
+            return redirect()->back();
+        } catch (\Throwable $th) {
+            return redirect()->back();
+        }
     }
 
     /**

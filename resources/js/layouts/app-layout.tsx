@@ -21,7 +21,8 @@ import {
   UserCircle,
   Users,
 } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
+import { toast } from 'sonner';
 
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -52,8 +53,9 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { Toaster } from '@/components/ui/sonner';
 import { logout } from '@/routes';
-import { BreadcrumbItem, NavItem } from '@/types';
+import { BreadcrumbItem, NavItem, SharedData } from '@/types';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -386,38 +388,58 @@ export const AppLayout = ({
   breadcrumbs,
   ...props
 }: AppLayoutProps) => {
-  return (
-    <SidebarProvider
-      style={
-        {
-          '--sidebar-width': 'calc(var(--spacing) * 72)',
-          '--header-height': 'calc(var(--spacing) * 12)',
-        } as React.CSSProperties
-      }
-    >
-      <SidebarMain {...props} />
-      <SidebarInset>
-        <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
-          <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mx-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumbs breadcrumbs={breadcrumbs ?? []} />
-            {/* <h1 className="text-base font-medium">Documents</h1> */}
-            <div className="ml-auto flex items-center gap-2"></div>
-          </div>
-        </header>
+  const { props: _props } = usePage<SharedData>();
 
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              {children}
+  useEffect(() => {
+    if (_props.flash.toast?.message) {
+      switch (_props.flash.toast?.type) {
+        case 'success':
+          toast.success(_props.flash.toast.message);
+          break;
+        case 'error':
+          toast.error(_props.flash.toast.message);
+          break;
+        default:
+          toast(_props.flash.toast.message);
+      }
+    }
+  }, [_props.flash.toast]);
+
+  return (
+    <>
+      <SidebarProvider
+        style={
+          {
+            '--sidebar-width': 'calc(var(--spacing) * 72)',
+            '--header-height': 'calc(var(--spacing) * 12)',
+          } as React.CSSProperties
+        }
+      >
+        <SidebarMain {...props} />
+        <SidebarInset>
+          <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
+            <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
+              <SidebarTrigger className="-ml-1" />
+              <Separator
+                orientation="vertical"
+                className="mx-2 data-[orientation=vertical]:h-4"
+              />
+              <Breadcrumbs breadcrumbs={breadcrumbs ?? []} />
+              {/* <h1 className="text-base font-medium">Documents</h1> */}
+              <div className="ml-auto flex items-center gap-2"></div>
+            </div>
+          </header>
+
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-2">
+              <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                {children}
+              </div>
             </div>
           </div>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+        </SidebarInset>
+      </SidebarProvider>
+      <Toaster />
+    </>
   );
 };
