@@ -5,12 +5,11 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { initializeTheme } from './hooks/use-appearance';
-
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+import { env } from '@/env';
+import { initializeTheme } from '@/hooks/use-appearance';
 
 createInertiaApp({
-  title: (title) => (title ? `${title} - ${appName}` : appName),
+  title: (title) => (title ? `${title} - ${env.viteAppName}` : env.viteAppName),
   resolve: (name) =>
     resolvePageComponent(
       `./pages/${name}.tsx`,

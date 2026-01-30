@@ -18,7 +18,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('kasir', KasirController::class);
     Route::resource('member', MemberController::class);
-    Route::resource('produk', ProdukController::class);
+    Route::resource('produk', ProdukController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::resource('stok', StokController::class);
     Route::resource('transaksi', TransaksiController::class);
 

@@ -20,6 +20,7 @@ import {
   useState,
 } from 'react';
 
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -49,6 +50,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { AppLayout } from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 import { store } from '@/routes/produk';
 import { BreadcrumbItem } from '@/types';
 
@@ -111,9 +113,10 @@ const ProdukPage = ({
     search: useId(),
   };
 
+  const [open, onOpenChange] = useState<boolean>(false);
   const [category, setCategory] = useState<Category>('Makanan');
   const [search, setSearch] = useState(searchFilter);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateQueryParams = useCallback(
@@ -160,26 +163,6 @@ const ProdukPage = ({
     };
   }, [debouncedSearch]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreview(null);
-    }
-  };
-
-  const handleRemoveImage = () => {
-    setPreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Produk" />
@@ -212,7 +195,7 @@ const ProdukPage = ({
               </SelectContent>
             </Select>
 
-            <Dialog>
+            <Dialog onOpenChange={onOpenChange} open={open}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   <Plus />
@@ -238,34 +221,59 @@ const ProdukPage = ({
                       preserveScroll: true,
                     }}
                     className="space-y-4"
+                    onSuccess={() => onOpenChange(false)}
                   >
-                    {({ resetAndClearErrors, processing, errors }) => (
-                      <>
-                        <div className="space-y-4">
-                          <div>
-                            <Label htmlFor={ids.foto}>Foto Produk</Label>
-                            <p className="mb-2 text-sm text-muted-foreground">
-                              Upload foto produk (opsional)
-                            </p>
-                            {preview ? (
+                    {({ resetAndClearErrors, processing, errors }) => {
+                      return (
+                        <>
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor={ids.foto}>Foto Produk</Label>
+                              <p className="mb-2 text-sm text-muted-foreground">
+                                Upload foto produk (opsional)
+                              </p>
                               <div className="relative">
                                 <label
                                   htmlFor={ids.foto}
-                                  className="relative block h-auto w-full cursor-pointer overflow-hidden rounded-sm border border-border"
+                                  className={cn(
+                                    'flex cursor-pointer rounded-sm border-border',
+                                    imagePreview
+                                      ? 'h-auto w-full overflow-hidden border'
+                                      : 'h-40 flex-col items-center justify-center border-2 border-dashed transition-colors hover:border-primary hover:bg-accent',
+                                  )}
                                 >
-                                  <img
-                                    src={preview}
-                                    alt="Preview"
-                                    className="h-full w-full object-cover"
-                                  />
+                                  {imagePreview ? (
+                                    <img
+                                      src={URL.createObjectURL(imagePreview)}
+                                      alt="Preview"
+                                      className="h-full w-full object-cover"
+                                    />
+                                  ) : (
+                                    <>
+                                      <Upload className="mb-2 h-10 w-10 text-muted-foreground" />
+                                      <span className="text-sm text-foreground">
+                                        Klik untuk upload foto
+                                      </span>
+                                      <span className="mt-1 text-xs text-muted-foreground">
+                                        Hanya 1 gambar
+                                      </span>
+                                    </>
+                                  )}
                                   <input
                                     ref={fileInputRef}
                                     id={ids.foto}
                                     type="file"
                                     name="image"
                                     accept="image/*"
-                                    onChange={handleFileChange}
+                                    onChange={({
+                                      currentTarget: { files },
+                                    }) => {
+                                      if (files) {
+                                        setImagePreview(files[0]);
+                                      }
+                                    }}
                                     className="hidden"
+                                    multiple={false}
                                   />
                                 </label>
                                 <Button
@@ -275,121 +283,91 @@ const ProdukPage = ({
                                   className="absolute top-2 right-2"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleRemoveImage();
+                                    setImagePreview(null);
+                                    if (fileInputRef.current) {
+                                      fileInputRef.current.value = '';
+                                    }
                                   }}
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
-                            ) : (
-                              <label
-                                htmlFor={ids.foto}
-                                className="flex h-40 cursor-pointer flex-col items-center justify-center rounded-sm border-2 border-dashed border-border transition-colors hover:border-primary hover:bg-accent"
-                              >
-                                <Upload className="mb-2 h-10 w-10 text-muted-foreground" />
-                                <span className="text-sm text-foreground">
-                                  Klik untuk upload foto
-                                </span>
-                                <span className="mt-1 text-xs text-muted-foreground">
-                                  Hanya 1 gambar
-                                </span>
-                                <input
-                                  ref={fileInputRef}
-                                  id={ids.foto}
-                                  type="file"
-                                  name="image"
-                                  accept="image/*"
-                                  onChange={handleFileChange}
-                                  className="hidden"
-                                />
-                              </label>
-                            )}
-                            {errors.image && (
-                              <p className="mt-2 text-sm text-destructive">
-                                {errors.image}
-                              </p>
-                            )}
-                          </div>
+                              <InputError message={errors.image} />
+                            </div>
 
-                          <div className="space-y-2">
-                            <Label htmlFor={ids.nama}>Nama Produk *</Label>
-                            <Input
-                              id={ids.nama}
-                              name="name"
-                              placeholder="Contoh: Mie Goreng"
-                              required
-                            />
-                            {errors.name && (
-                              <p className="text-sm text-destructive">
-                                {errors.name}
-                              </p>
-                            )}
-                          </div>
+                            <div className="space-y-2">
+                              <Label htmlFor={ids.nama}>Nama Produk *</Label>
+                              <Input
+                                id={ids.nama}
+                                name="name"
+                                placeholder="Contoh: Mie Goreng"
+                                required
+                                autoFocus
+                              />
+                              <InputError message={errors.name} />
+                            </div>
 
-                          <div className="space-y-2">
-                            <Label htmlFor={ids.category}>Kategori *</Label>
-                            <Select
-                              value={category}
-                              onValueChange={(value: Category) =>
-                                setCategory(value)
-                              }
-                              required
-                            >
-                              <SelectTrigger
-                                className="w-full"
-                                id={ids.category}
-                              >
-                                <SelectValue placeholder="Pilih kategori" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {categories
-                                  .filter(({ value }) => value !== '*')
-                                  .map(({ value, label }, k) => (
-                                    <SelectItem key={k} value={value}>
-                                      {label}
-                                    </SelectItem>
-                                  ))}
-                              </SelectContent>
-                            </Select>
-                            <input
-                              type="hidden"
-                              name="category"
-                              value={category}
-                            />
-                            {errors.category && (
-                              <p className="text-sm text-destructive">
-                                {errors.category}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        <DialogFooter>
-                          <DialogClose asChild>
-                            <Button
-                              variant="outline"
-                              onClick={() => {
-                                resetAndClearErrors();
-                                setPreview(null);
-                                setCategory('Makanan');
-                                if (fileInputRef.current) {
-                                  fileInputRef.current.value = '';
+                            <div className="space-y-2">
+                              <Label htmlFor={ids.category}>Kategori *</Label>
+                              <Select
+                                value={category}
+                                onValueChange={(value: Category) =>
+                                  setCategory(value)
                                 }
-                              }}
+                                required
+                              >
+                                <SelectTrigger
+                                  className="w-full"
+                                  id={ids.category}
+                                >
+                                  <SelectValue placeholder="Pilih kategori" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {categories
+                                    .filter(({ value }) => value !== '*')
+                                    .map(({ value, label }, k) => (
+                                      <SelectItem key={k} value={value}>
+                                        {label}
+                                      </SelectItem>
+                                    ))}
+                                </SelectContent>
+                              </Select>
+                              <input
+                                type="hidden"
+                                name="category"
+                                value={category}
+                              />
+                              <InputError message={errors.category} />
+                            </div>
+                          </div>
+
+                          <DialogFooter>
+                            <DialogClose asChild>
+                              <Button
+                                variant="outline"
+                                onClick={() => {
+                                  resetAndClearErrors();
+                                  setImagePreview(null);
+                                  setCategory('Makanan');
+                                  if (fileInputRef.current) {
+                                    fileInputRef.current.value = '';
+                                  }
+                                }}
+                              >
+                                Batal
+                              </Button>
+                            </DialogClose>
+                            <Button
+                              type="submit"
+                              className="gradient-primary text-primary-foreground"
+                              disabled={processing}
                             >
-                              Batal
+                              {processing ? 'Menyimpan...' : 'Simpan'}
                             </Button>
-                          </DialogClose>
-                          <Button
-                            type="submit"
-                            className="gradient-primary text-primary-foreground"
-                            disabled={processing}
-                          >
-                            {processing ? 'Menyimpan...' : 'Simpan'}
-                          </Button>
-                        </DialogFooter>
-                      </>
-                    )}
+                          </DialogFooter>
+                        </>
+                      );
+                    }}
                   </Form>
                 </div>
               </DialogContent>

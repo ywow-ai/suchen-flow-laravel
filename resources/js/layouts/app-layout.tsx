@@ -54,10 +54,9 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
+import { env } from '@/env';
 import { logout } from '@/routes';
-import { BreadcrumbItem, NavItem, SharedData } from '@/types';
-
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+import { BreadcrumbItem, NavItem, SharedData, Toast } from '@/types';
 
 const navs: Record<string, NavItem[]> = {
   main: [
@@ -171,7 +170,9 @@ const SidebarMain = ({
             >
               <a href="#">
                 <Building2 className="size-5!" />
-                <span className="text-base font-semibold">{appName}</span>
+                <span className="text-base font-semibold">
+                  {env.viteAppName}
+                </span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -392,16 +393,31 @@ export const AppLayout = ({
 
   useEffect(() => {
     if (_props.flash.toast?.message) {
-      switch (_props.flash.toast?.type) {
-        case 'success':
-          toast.success(_props.flash.toast.message);
-          break;
-        case 'error':
-          toast.error(_props.flash.toast.message);
-          break;
-        default:
-          toast(_props.flash.toast.message);
-      }
+      (
+        (
+          ({
+            success: () =>
+              toast.success(_props.flash.toast?.title, {
+                description: _props.flash.toast?.message,
+              }),
+            error: () =>
+              toast.error(_props.flash.toast?.title, {
+                description: _props.flash.toast?.message,
+              }),
+            warning: () =>
+              toast.warning(_props.flash.toast?.title, {
+                description: _props.flash.toast?.message,
+              }),
+            info: () =>
+              toast.info(_props.flash.toast?.title, {
+                description: _props.flash.toast?.message,
+              }),
+          }) satisfies Record<Toast['type'], () => void>
+        )[_props.flash.toast.type] ??
+        toast(_props.flash.toast.title, {
+          description: _props.flash.toast.message,
+        })
+      )();
     }
   }, [_props.flash.toast]);
 

@@ -20,9 +20,7 @@ class AuthController extends Controller
 
     public function create(Request $request)
     {
-        return Inertia::render('login', [
-            'status' => $request->session()->get('status'),
-        ]);
+        return Inertia::render('login', ['status' => $request->session()->get('status')]);
     }
 
     public function store(Request $request)
@@ -32,28 +30,18 @@ class AuthController extends Controller
             $user = User::where('username', $request->input('username'))->first();
 
             if (! $user) {
-                return back()
-                    ->withInput($request->only('username'))
-                    ->withErrors([
-                        'username' => 'Username tidak ditemukan.',
-                    ])
-                    ->with('error', 'Login gagal.');
+                return back()->withInput($request->only('username'))->withErrors(['username' => 'Username tidak ditemukan.']);
             }
 
             if (! Hash::check($request->input('password'), $user->password)) {
-                return back()
-                    ->withInput($request->only('username'))
-                    ->withErrors([
-                        'password' => 'Password salah.',
-                    ])
-                    ->with('error', 'Login gagal.');
+                return back()->withInput($request->only('username'))->withErrors(['password' => 'Password salah.']);
             }
 
             Auth::login($user);
 
             return redirect('/');
         } catch (\Throwable $th) {
-            return redirect()->back();
+            return back();
         }
     }
 

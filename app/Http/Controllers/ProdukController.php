@@ -60,20 +60,20 @@ class ProdukController extends Controller
     public function store(Request $request)
     {
         try {
-            $validated = $request->validate([
+            $request->validate([
                 'name' => ['required', 'string', 'max:100'],
                 'category' => ['required', 'string', 'in:Makanan,Minuman'],
                 'description' => ['nullable', 'string'],
-                'image' => ['nullable', 'image', 'max:2048'],
+                'image' => ['required', 'image', 'max:2048'],
             ]);
-
-            sleep(1);
 
             toastSuccess('Berhasil');
 
-            return redirect()->back();
+            return back();
         } catch (\Throwable $th) {
-            return redirect()->back();
+            toastError($th->getMessage());
+
+            return back()->setStatusCode(400);
         }
     }
 

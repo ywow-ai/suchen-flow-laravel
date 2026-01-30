@@ -1,13 +1,13 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import { Building2 } from 'lucide-react';
 
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
+import { env } from '@/env';
 import { store } from '@/routes/login';
-
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 export default function Login() {
   return (
@@ -19,7 +19,7 @@ export default function Login() {
             <div className="flex size-6 items-center justify-center rounded-sm bg-primary text-primary-foreground">
               <Building2 className="size-4!" />
             </div>
-            {appName}
+            {env.viteAppName}
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-center">
@@ -28,8 +28,9 @@ export default function Login() {
               {...store.form()}
               resetOnSuccess={['password']}
               className="flex flex-col gap-6"
+              disableWhileProcessing
             >
-              {({ processing, errors }) => (
+              {({ processing, errors, clearErrors }) => (
                 <>
                   <FieldGroup>
                     <div className="flex flex-col items-center gap-1 text-center">
@@ -50,12 +51,9 @@ export default function Login() {
                         tabIndex={1}
                         autoComplete="username"
                         placeholder="kai"
+                        className={errors.username && 'border-destructive'}
                       />
-                      {errors.username && (
-                        <p className="text-sm text-destructive">
-                          {errors.username}
-                        </p>
-                      )}
+                      <InputError message={errors.username} />
                     </Field>
                     <Field>
                       <FieldLabel htmlFor="password">Kata Sandi</FieldLabel>
@@ -67,12 +65,9 @@ export default function Login() {
                         tabIndex={2}
                         autoComplete="current-password"
                         placeholder="Kata sandi"
+                        className={errors.password && 'border-destructive'}
                       />
-                      {errors.password && (
-                        <p className="text-sm text-destructive">
-                          {errors.password}
-                        </p>
-                      )}
+                      <InputError message={errors.password} />
                     </Field>
                     <Field>
                       <Button
@@ -80,6 +75,7 @@ export default function Login() {
                         tabIndex={4}
                         disabled={processing}
                         data-test="login-button"
+                        onClick={() => clearErrors()}
                       >
                         {processing && <Spinner />}
                         Masuk
